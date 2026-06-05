@@ -15,7 +15,8 @@ RUN apk add --no-cache \
   ca-certificates \
   py3-opencv \
   curl \
-  ffmpeg
+  ffmpeg \
+  iproute2
 
 # Install Python dependencies with cache mount
 COPY --from=builder /app/requirements.txt ./
