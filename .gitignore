@@ -255,3 +255,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Local AI tooling — dev-environment only, not part of the addon repo
+.claude/
+graphify-out/
+.graphifyignore
