@@ -1,0 +1,60 @@
+name: Auto-bump BambuBuddy daily version
+
+# Runs at 14:00 UTC daily — a couple of hours after maziggy's typical noon-UTC
+# daily release window. Also triggerable manually from the Actions tab.
+on:
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-and-bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest daily version from maziggy
+        id: upstream
+        run: |
+          LATEST=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/maziggy/bambuddy/releases" \
+            | python3 -c "
+          import sys, json
+          releases = json.load(sys.stdin)
+          daily = [r for r in releases if 'daily' in r.get('tag_name', '')]
+          print(daily[0]['tag_name'].lstrip('v') if daily else '', end='')
+          ")
+          echo "version=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Get current version from config.yaml
+        id: current
+        run: |
+          CURRENT=$(grep '^version:' bambuddy-daily/config.yaml \
+            | sed 's/version: *"\(.*\)"/\1/')
+          echo "version=$CURRENT" >> "$GITHUB_OUTPUT"
+
+      - name: No update needed
+        if: |
+          steps.upstream.outputs.version == '' ||
+          steps.upstream.outputs.version == steps.current.outputs.version
+        run: |
+          echo "Already up to date: ${{ steps.current.outputs.version }}"
+
+      - name: Bump version and push
+        if: |
+          steps.upstream.outputs.version != '' &&
+          steps.upstream.outputs.version != steps.current.outputs.version
+        run: |
+          NEW="${{ steps.upstream.outputs.version }}"
+          OLD="${{ steps.current.outputs.version }}"
+          echo "Bumping $OLD → $NEW"
+          sed -i "s/version: \"$OLD\"/version: \"$NEW\"/" bambuddy-daily/config.yaml
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bambuddy-daily/config.yaml
+          git commit -m "chore: auto-bump bambuddy-daily to $NEW"
+          git push
