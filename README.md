@@ -1,99 +1,103 @@
 <p align="center">
-  <img src="https://github.com/Spegeli/homeassistant-app-bambuddy/blob/main/logo.png?raw=true" alt="Bambuddy Logo" width="300">
+  <img src="https://github.com/dmuth23/ha-3dprint-addon/blob/main/logo.png?raw=true" alt="ha-3dprint-addon Logo" width="300">
 </p>
 
-# 🚀 Bambuddy – Home Assistant App
+# 🖨️ ha-3dprint-addon — 3D Printing Add-ons for Home Assistant
 
 <p align="center">
-  <a href="https://github.com/maziggy/bambuddy">Bambuddy</a>, delivered as a first-class Home Assistant App for easy installation and updates.
+  A Home Assistant add-on repository bringing together the tools you need to run a self-hosted 3D-printing setup:
+  <a href="https://github.com/maziggy/bambuddy">BamBuddy</a> for printer management and
+  <a href="https://github.com/Donkie/Spoolman">Spoolman</a> for filament inventory tracking — both packaged as native HA add-ons.
 </p>
 <p align="center">
-  <strong>Your printers. No cloud. Your rules.</strong><br>
+  <strong>Your printers. Your filament. No cloud. Your rules.</strong><br>
   Self-hosted command center for Bambu Lab &mdash; from one A1 to a 40-printer farm.
 </p>
 <p align="center">
-  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/Spegeli/homeassistant-app-bambuddy/main/bambuddy/config.yaml&query=$.version&label=stable&color=blue">
-  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/Spegeli/homeassistant-app-bambuddy/main/bambuddy-beta/config.yaml&query=$.version&label=beta&color=orange">
-  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/Spegeli/homeassistant-app-bambuddy/main/bambuddy-daily/config.yaml&query=$.version&label=daily&color=purple">
+  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/dmuth23/ha-3dprint-addon/main/bambuddy/config.yaml&query=$.version&label=bambuddy%20stable&color=blue">
+  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/dmuth23/ha-3dprint-addon/main/bambuddy-beta/config.yaml&query=$.version&label=bambuddy%20beta&color=orange">
+  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/dmuth23/ha-3dprint-addon/main/bambuddy-daily/config.yaml&query=$.version&label=bambuddy%20daily&color=purple">
+  <img src="https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/dmuth23/ha-3dprint-addon/main/spoolman/config.yaml&query=$.version&label=spoolman&color=teal">
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/aarch64-yes-green.svg">
   <img src="https://img.shields.io/badge/amd64-yes-green.svg">
+  <img src="https://img.shields.io/badge/armv7-yes-green.svg">
 </p>
+
+---
+
+## 📦 What's in this repository
+
+| Add-on | What it does |
+|---|---|
+| **BamBuddy** | ✅ Stable release of the [BamBuddy](https://github.com/maziggy/bambuddy) printer command center — recommended for most users |
+| **BamBuddy (Beta)** | 🧪 Beta release — newer features, may contain bugs |
+| **BamBuddy (Daily)** | 🔬 Daily build — cutting-edge, least stable, kept in sync automatically (see below) |
+| **Spoolman** | 🧵 [Spoolman](https://github.com/Donkie/Spoolman) — track your filament inventory: spools, materials, vendors, and usage |
 
 ---
 
 ## 📋 Requirements
 
 - Home Assistant OS or Supervised installation (Supervisor required)
-- Supported architecture: aarch64 or amd64
+- Supported architecture: amd64, aarch64, or armv7 (Spoolman only — see its own listing for BamBuddy's supported architectures)
 
 ---
 
-## 📦 Installation
+## 🚀 Installation
 
 ### Via button (recommended)
 
 Click the button below to automatically add the repository to Home Assistant:
 
-[![Add Repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/Spegeli/homeassistant-app-bambuddy)
+[![Add Repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/dmuth23/ha-3dprint-addon)
 
 Or add it manually:
 
-1. In Home Assistant, go to **Settings → Apps → App Store**
+1. In Home Assistant, go to **Settings → Add-ons → Add-on Store**
 2. Click the three-dot menu → **Repositories**
-3. Add `https://github.com/Spegeli/homeassistant-app-bambuddy`
+3. Add `https://github.com/dmuth23/ha-3dprint-addon`
 
----
-
-Once the repository is added, you'll find **three versions** of BamBuddy available:
-
-| Version | Description |
-|---|---|
-| **BamBuddy** | ✅ Stable release — recommended for most users |
-| **BamBuddy (Beta)** | 🧪 Beta release — newer features, may contain bugs |
-| **BamBuddy (Daily)** | 🔬 Daily build — cutting-edge, least stable |
-
-Install your preferred version and follow the configuration steps.
+Once the repository is added, install whichever add-ons you need from the list above and follow each one's configuration steps.
 
 ---
 
 ## 🔄 Automatic Updates
- 
-This App includes automatic update tracking for all three versions (Stable, Beta and Daily).
- 
-Updates are checked **every hour**. As soon as a new BamBuddy release is available, it will automatically appear in Home Assistant — ready to install with a single click, just like any other App update.
- 
-No manual intervention required. 🎉
+
+All four add-ons report their version to Home Assistant, so updates show up in the **Add-on Store** like any other add-on — one click to install.
+
+**BamBuddy (Daily) gets extra care**: a scheduled GitHub Actions workflow checks [maziggy/bambuddy](https://github.com/maziggy/bambuddy) for new daily tags every day and automatically bumps `bambuddy-daily/config.yaml` when a newer build is published — no manual version-tracking required to stay current with upstream's daily releases. The other add-ons are updated by hand as new stable/beta releases land.
 
 ---
 
 ## 💾 Data Persistence
 
-All data (print archive, settings, logs) is stored persistently in the `addon_configs` directory, which is accessible via the **File Editor** in Home Assistant. Your data is safe across updates and restarts. When uninstalling, Home Assistant will ask whether to remove the app data as well — if you keep it, your data will still be there after a reinstall.
+All add-on data (print archives, filament inventory, settings, logs) is stored persistently under `addon_configs/<slug>/`, accessible via the **File Editor** in Home Assistant. Your data survives updates and restarts. When uninstalling, Home Assistant will ask whether to remove the add-on data as well — keep it, and your data will still be there after a reinstall.
 
 ---
 
-## ⚠️ Known Limitations
- 
+## ⚠️ Known Limitations (BamBuddy)
+
 ### HA Ingress — Not Supported
- 
-HA Ingress is currently **not supported** and is not planned. Bambuddy's SPA architecture relies on a stable origin for API calls, routing, PWA scope, and service workers — all of which are incompatible with HA Ingress's rotating per-session subpaths. This would require extensive rewrites to Bambuddy core.
- 
+
+HA Ingress is currently **not supported** and is not planned for BamBuddy. Its SPA architecture relies on a stable origin for API calls, routing, PWA scope, and service workers — all incompatible with HA Ingress's rotating per-session subpaths. This would require extensive rewrites to BamBuddy core. (Spoolman, by contrast, runs fully through Ingress.)
+
 ### Virtual Printer — Potential Port Conflicts
 
-When using BamBuddy's Virtual Printer feature, several ports will be bound directly on the Home Assistant host. This may conflict with other installed Apps or services (most notably the **Mosquitto MQTT Broker** on port 8883).
+When using BamBuddy's Virtual Printer feature, several ports are bound directly on the Home Assistant host. This may conflict with other installed add-ons or services (most notably the **Mosquitto MQTT Broker** on port 8883).
 
-For a full list of affected ports and details, see the **Documentation** tab of the respective App.
+For a full list of affected ports and details, see the **Documentation** tab of the BamBuddy add-on.
 
 ---
 
 ## ℹ️ Disclaimer
- 
-This is **not** an official release by the BamBuddy developer. This project simply packages [BamBuddy](https://github.com/maziggy/bambuddy) as a native Home Assistant App for easy installation and updates.
- 
-I am not affiliated with or the developer of BamBuddy itself — therefore I am unable to provide support for BamBuddy-related issues, bugs, or feature requests. For anything related to BamBuddy, please refer to the original project:
- 
+
+This repository is **not** an official release by the BamBuddy or Spoolman developers. It simply packages [BamBuddy](https://github.com/maziggy/bambuddy) and [Spoolman](https://github.com/Donkie/Spoolman) as native Home Assistant add-ons for easy installation and updates.
+
+I am not affiliated with either upstream project, so I'm unable to provide support for BamBuddy- or Spoolman-specific issues, bugs, or feature requests. For anything related to the underlying apps, please refer to the original projects:
+
 👉 **[github.com/maziggy/bambuddy](https://github.com/maziggy/bambuddy)**
- 
-Support provided here is limited to the **Home Assistant App packaging and its installation** only.
+👉 **[github.com/Donkie/Spoolman](https://github.com/Donkie/Spoolman)**
+
+Support provided here is limited to the **add-on packaging and installation** — please [open an issue](https://github.com/dmuth23/ha-3dprint-addon/issues) on this repo for packaging-related problems.
