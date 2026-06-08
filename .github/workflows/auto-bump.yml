@@ -7,6 +7,10 @@ on:
     - cron: '0 14 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: auto-bump-bambuddy-daily
+  cancel-in-progress: false
+
 jobs:
   check-and-bump:
     runs-on: ubuntu-latest
@@ -57,4 +61,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bambuddy-daily/config.yaml
           git commit -m "chore: auto-bump bambuddy-daily to $NEW"
+          # Rebase onto whatever landed on main since checkout (e.g. a manual
+          # commit) before pushing, so a moved remote can't reject this push.
+          git pull --rebase origin main
           git push
