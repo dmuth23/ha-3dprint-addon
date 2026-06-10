@@ -1,0 +1,19 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: OrcaSlicer Sidecar
+version: "1.0.0"
+slug: orca_slicer_sidecar
+description: REST API sidecar wrapping OrcaSlicer for slicing 3MF/STL files to G-code — used by BambuBuddy as an external slicer backend.
+url: "https://github.com/dmuth23/ha-3dprint-addon"
+arch:
+  - amd64
+startup: services
+init: false
+ports:
+  3000/tcp: 3003
+ports_description:
+  3000/tcp: "OrcaSlicer API port (container listens on 3000, mapped to host 3003)."
+environment:
+  DATA_PATH: /data
+webui: "http://[HOST]:[PORT:3000]/health"
+hassio_api: false
+homeassistant_api: false
