@@ -1,4 +1,4 @@
-# ha-bambuddy
+# ha-3dprint-addon
 
 A standalone HA addon for BambuBuddy — forked from
 [Spegeli/homeassistant-app-bambuddy](https://github.com/Spegeli/homeassistant-app-bambuddy)
@@ -26,9 +26,9 @@ structure first to understand what's happening before proposing changes.
 ## Currently installed addon
 
 - Source repo forked from: `https://github.com/Spegeli/homeassistant-app-bambuddy`
-- Installed slug: `bd367cad_bambuddy_daily`
-- Addon data lives at: `/mnt/ha/addon_configs/bd367cad_bambuddy_daily/`
-- SQLite DB: `/mnt/ha/addon_configs/bd367cad_bambuddy_daily/data/bambuddy.db`
+- Installed slug: `33558673_bambuddy_daily`
+- Addon data lives at: `/mnt/ha/addon_configs/33558673_bambuddy_daily/`
+- SQLite DB: `/mnt/ha/addon_configs/33558673_bambuddy_daily/data/bambuddy.db`
 
 ## Virtual Printer — current state
 
@@ -54,6 +54,12 @@ Investigate the addon and app code to understand why before touching anything.
 - Claude never SSH-pulls on the HA VM — user owns the pull step
 - Never modify `.storage/`
 - Validate before committing
+
+## Memory practices
+- The user runs concurrent Claude Code sessions across repos/projects (e.g. this repo + homeassistant-config at the same time) — memory is the shared thread that keeps them honest with each other
+- Keep memory constantly up to date: after any meaningful change, decision, or discovery, write/update the relevant memory file (don't batch it for "later")
+- Check memory regularly during a session, not just at the start — especially before git operations (commit/push/reconcile) where another concurrent session may have already moved the remote
+- Memory reflects point-in-time notes, not live state — always verify against git/the actual repo before assuming a memory is still current
 
 ## graphify
 
