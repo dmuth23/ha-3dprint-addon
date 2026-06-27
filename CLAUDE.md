@@ -70,3 +70,10 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+## Workflow: Forge
+This project uses **Forge** for non-trivial work — the framework at
+`~/projects/claude-harness-loop/` (the `/forge` lever). Mid-brainstorm, `/forge`
+captures the conversation, frames it into a pieces-board (HAVE/BUILD/UNKNOWN) + a
+quantifiable goal, runs an advisor-refined interview, freezes a spec, then builds +
+verifies. Efforts land in `efforts/<slug>/` here and mirror to
+`~/projects/claude-harness-loop/efforts/`. (Forge supersedes specforge.)
