@@ -1,0 +1,86 @@
+name: Track Spoolman release
+
+# Donkie/Spoolman publishes IMMUTABLE, versioned image tags (e.g. 0.23.1) on a slow
+# cadence — every few months, not daily. So unlike bambuddy-daily (floating :daily,
+# needs digest pinning), we just pin spoolman/Dockerfile's FROM to a specific version
+# tag and bump it — plus the addon version in config.yaml — when a new STABLE release
+# lands. The version tag is immutable and the Dockerfile changes with the bump, so a
+# normal HA "Update" rebuilds from the new code (no separate Rebuild needed).
+#
+# Weekly check (Mondays 15:00 UTC) + manual dispatch (releases are infrequent).
+on:
+  schedule:
+    - cron: '0 15 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: track-spoolman
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPO: Donkie/Spoolman
+  ADDON_DIR: spoolman
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Resolve latest upstream stable release
+        id: upstream
+        run: |
+          set -euo pipefail
+          # releases/latest excludes prereleases/drafts — we track stable only.
+          LATEST=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${UPSTREAM_REPO}/releases/latest" \
+            | python3 -c "import sys,json;print(json.load(sys.stdin).get('tag_name','').lstrip('v'),end='')")
+          if [ -z "${LATEST}" ]; then
+            echo "::error::Could not resolve latest ${UPSTREAM_REPO} release"
+            exit 1
+          fi
+          echo "version=${LATEST}" >> "$GITHUB_OUTPUT"
+          echo "Latest upstream stable = ${LATEST}"
+
+      - name: Read currently pinned version from Dockerfile
+        id: current
+        run: |
+          set -euo pipefail
+          PINNED=$( { grep -oE 'ghcr\.io/donkie/spoolman:[^[:space:]]+' \
+            "${ADDON_DIR}/Dockerfile" || true; } | head -1 | sed 's/.*://')
+          echo "version=${PINNED}" >> "$GITHUB_OUTPUT"
+          echo "Pinned upstream = ${PINNED:-<none>}"
+
+      - name: Up to date — nothing to do
+        if: steps.upstream.outputs.version == steps.current.outputs.version
+        run: echo "Already pinned to Spoolman ${{ steps.current.outputs.version }}."
+
+      - name: Bump pin + addon version, commit & push
+        if: steps.upstream.outputs.version != steps.current.outputs.version
+        run: |
+          set -euo pipefail
+          NEW="${{ steps.upstream.outputs.version }}"
+          OLD="${{ steps.current.outputs.version }}"
+
+          # 1. Repoint the Dockerfile FROM to the new immutable version tag (the real change).
+          sed -i -E "s#(ghcr\.io/donkie/spoolman:)[^[:space:]]+#\1${NEW}#" \
+            "${ADDON_DIR}/Dockerfile"
+          # 2. Bump the addon version (reset the wrapper revision to -0 on an upstream
+          #    bump) so HA surfaces the update.
+          OLDV=$(grep '^version:' "${ADDON_DIR}/config.yaml" | sed 's/version: *"\(.*\)"/\1/')
+          sed -i "s/^version: \".*\"/version: \"${NEW}-0\"/" "${ADDON_DIR}/config.yaml"
+
+          echo "Dockerfile : donkie/spoolman ${OLD} -> ${NEW}"
+          echo "config.yaml: ${OLDV} -> ${NEW}-0"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${ADDON_DIR}/Dockerfile" "${ADDON_DIR}/config.yaml"
+          git commit -m "chore: track Donkie/Spoolman ${NEW}"
+          # Rebase onto anything that landed on main since checkout (e.g. the daily
+          # bambuddy bump) before pushing.
+          git pull --rebase origin main
+          git push
