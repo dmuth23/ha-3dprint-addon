@@ -1,5 +1,7 @@
 # ha-3dprint-addon
 
+Session state: .claude/STATE.md (written by /handoff) — read it first when resuming; if absent, no handoff has run here yet.
+
 A standalone HA addon for BambuBuddy — forked from
 [Spegeli/homeassistant-app-bambuddy](https://github.com/Spegeli/homeassistant-app-bambuddy)
 with no upstream tracking. The goal is to own the addon wrapper while continuing
