@@ -1,5 +1,5 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
-FROM ghcr.io/maziggy/bambuddy:daily@sha256:bf17c67b9b58d1231084f05be336a38259ef7fb120b3316e38fae54e941b65df AS builder
+FROM ghcr.io/maziggy/bambuddy:daily@sha256:8d9b52bebc1f634225d0ed9f417aaf6211a94de162ab7d56de203273f6ccae2b AS builder
 FROM ghcr.io/home-assistant/base-python:3.14-alpine3.23
 
 LABEL org.opencontainers.image.title="Home Assistant Add-on: Bambuddy add-on (DAILY)"
